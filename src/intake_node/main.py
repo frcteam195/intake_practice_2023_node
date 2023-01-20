@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import tf2_ros
 import rospy
 from threading import Thread
 
@@ -15,33 +14,38 @@ def ros_func():
     global hmi_updates
     global robot_status
 
-    control_sub = BufferedROSMsgHandlerPy(Intake_Control)
-    control_sub.register_for_updates("IntakeControl")
-    status_pub = rospy.Publisher(name="IntakeStatus", data_class=Intake_Status, queue_size=50, tcp_nodelay=True)
+    control_subscriber = BufferedROSMsgHandlerPy(Intake_Control)
+    control_subscriber.register_for_updates("IntakeControl")
+    status_publisher = rospy.Publisher(
+        name="IntakeStatus", data_class=Intake_Status, queue_size=50, tcp_nodelay=True)
 
-    intakeRollerMotor = Motor(11, MotorType.TalonFX)
-    intakeRollerMotor.set_defaults()
-    intakeRollerMotor.set_neutral_mode(NeutralMode.Brake)
-    intakeRollerMotor.apply()
+    # intakeRollerMotor = Motor(11, MotorType.TalonFX)
+    # intakeRollerMotor.set_defaults()
+    # intakeRollerMotor.set_neutral_mode(NeutralMode.Brake)
+    # intakeRollerMotor.apply()
 
     rate = rospy.Rate(20)
 
     while not rospy.is_shutdown():
 
-        if control_sub.get() is not None:
+        if control_subscriber.get() is not None:
             if robot_status.get_mode() == RobotMode.DISABLED:
-                intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 0.0, 0.0)
+                # intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 0.0, 0.0)
+                pass
 
             else:
-                if control_sub.get().rollers_intake:
-                    intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 1.0, 0.0)
-                elif control_sub.get().rollers_outake:
-                    intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, -1.0, 0.0)
+                if control_subscriber.get().rollers_intake:
+                    # intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 1.0, 0.0)
+                    pass
+                elif control_subscriber.get().rollers_outake:
+                    # intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, -1.0, 0.0)
+                    pass
                 else:
-                    intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 0.0, 0.0)
+                    # intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 0.0, 0.0)
+                    pass
 
-        pubmsg = Intake_Status()
-        status_pub.publish(pubmsg)
+        status_message = Intake_Status()
+        status_publisher.publish(status_message)
 
         rate.sleep()
 
