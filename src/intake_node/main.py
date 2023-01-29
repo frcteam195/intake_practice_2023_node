@@ -23,7 +23,7 @@ def ros_func():
     intakeRollerMotor = Motor("intake", MotorType.TalonFX)
     # wristRollerMotor = Motor("wrist", MotorType.TalonFX)
 
-    pincherSolenoid = Solenoid(0, SolenoidType.SINGLE)
+    pincherSolenoid = Solenoid(6, SolenoidType.SINGLE)
     pincherSolenoid.set(SolenoidState.OFF)
 
     rate = rospy.Rate(20)
@@ -48,9 +48,9 @@ def ros_func():
                     pass
 
                 if intake_ctrl_msg.pincher_solenoid_on:
-                    pincherSolenoid.set(True)
+                    pincherSolenoid.set(SolenoidState.ON)
                 else:
-                    pincherSolenoid.set(False)
+                    pincherSolenoid.set(SolenoidState.OFF)
 
         status_message = Intake_Status()
         status_publisher.publish(status_message)
