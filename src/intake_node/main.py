@@ -23,7 +23,7 @@ def ros_func():
     intakeRollerMotor = Motor("intake", MotorType.TalonFX)
     # wristRollerMotor = Motor("wrist", MotorType.TalonFX)
 
-    pincherSolenoid = Solenoid("intake", SolenoidType.SINGLE)
+    pincherSolenoid = Solenoid("pincher", SolenoidType.SINGLE)
 
     rate = rospy.Rate(20)
 
