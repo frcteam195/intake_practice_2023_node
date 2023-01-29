@@ -23,8 +23,7 @@ def ros_func():
     intakeRollerMotor = Motor("intake", MotorType.TalonFX)
     # wristRollerMotor = Motor("wrist", MotorType.TalonFX)
 
-    pincherSolenoid = Solenoid(6, SolenoidType.SINGLE)
-    pincherSolenoid.set(SolenoidState.OFF)
+    pincherSolenoid = Solenoid("intake", SolenoidType.SINGLE)
 
     rate = rospy.Rate(20)
 
@@ -35,7 +34,6 @@ def ros_func():
             if robot_status.get_mode() == RobotMode.DISABLED:
                 intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 0.0, 0.0)
                 pass
-
             else:
                 if intake_ctrl_msg.rollers_intake:
                     intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 1.0, 0.0)
