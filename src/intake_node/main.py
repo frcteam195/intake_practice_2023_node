@@ -5,6 +5,7 @@ from threading import Thread
 
 
 from ck_utilities_py_node.motor import *
+from ck_utilities_py_node.solenoid import *
 from frc_robot_utilities_py_node.frc_robot_utilities_py import *
 from frc_robot_utilities_py_node.RobotStatusHelperPy import RobotStatusHelperPy, Alliance, RobotMode, BufferedROSMsgHandlerPy
 from ck_ros_msgs_node.msg import Intake_Control, Intake_Status
@@ -20,27 +21,36 @@ def ros_func():
         name="IntakeStatus", data_class=Intake_Status, queue_size=50, tcp_nodelay=True)
 
     intakeRollerMotor = Motor("intake", MotorType.TalonFX)
-    wristRollerMotor = Motor("wrist", MotorType.TalonFX)
+    # wristRollerMotor = Motor("wrist", MotorType.TalonFX)
+
+    pincherSolenoid = Solenoid(0, SolenoidType.SINGLE)
+    pincherSolenoid.set(SolenoidState.OFF)
 
     rate = rospy.Rate(20)
 
     while not rospy.is_shutdown():
 
         if control_subscriber.get() is not None:
+            intake_ctrl_msg : Intake_Control = control_subscriber.get()
             if robot_status.get_mode() == RobotMode.DISABLED:
                 intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 0.0, 0.0)
                 pass
 
             else:
-                if control_subscriber.get().rollers_intake:
+                if intake_ctrl_msg.rollers_intake:
                     intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 1.0, 0.0)
                     pass
-                elif control_subscriber.get().rollers_outake:
+                elif intake_ctrl_msg.rollers_outake:
                     intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, -1.0, 0.0)
                     pass
                 else:
                     intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 0.0, 0.0)
                     pass
+
+                if intake_ctrl_msg.pincher_solenoid_on:
+                    pincherSolenoid.set(True)
+                else:
+                    pincherSolenoid.set(False)
 
         status_message = Intake_Status()
         status_publisher.publish(status_message)
