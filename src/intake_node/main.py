@@ -38,7 +38,7 @@ def ros_func():
                 if intake_ctrl_msg.rollers_intake:
                     intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, 1.0, 0.0)
                     pass
-                elif intake_ctrl_msg.rollers_outake:
+                elif intake_ctrl_msg.rollers_outtake:
                     intakeRollerMotor.set(ControlMode.PERCENT_OUTPUT, -1.0, 0.0)
                     pass
                 else:
